@@ -1,0 +1,21 @@
+body{
+    background-image: url('../img/capoo_bg-img.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    height:100vh;
+}
+
+#icons>div>a>i{
+    font-size:10em; 
+    color:white;
+}
+#icons>div>a>p{
+    font-size:2em;
+}
+#icons>div>a:hover{
+    background-color:hsla(0, 0%, 50%, 0.265);
+    border-radius:10%;
+}
+#icons>div>a:hover>i{
+    color:rgb(53, 53, 53);
+}

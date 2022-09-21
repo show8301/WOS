@@ -1,0 +1,24 @@
+body{
+    background-image: url('../img/capoo_bg-img.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    height:100vh;
+}
+#menu{
+    padding-top:10em;
+}
+#foodtype-header p{
+    font-size:40px;
+}
+#rice-table>tbody td{
+    color:white;
+}
+#noodle-table>tbody td{
+    color:white;
+}
+#seafood-table>tbody td{
+    color:white;
+}
+#drinks-table>tbody td{
+    color:white;
+}

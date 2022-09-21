@@ -1,0 +1,10 @@
+body{
+    background-image: url('../img/capoo-login.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    height:100vh;
+}
+#content{
+    padding-top:10em;
+    padding-left:3em;
+}

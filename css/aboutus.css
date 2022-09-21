@@ -1,0 +1,20 @@
+body{
+    background-image: url('../img/capoo_bg-img.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    height:100vh;
+}
+
+#content{
+    padding-top:10em;
+}
+
+#content>div>div>h1>p{
+    font-size:100px;
+}
+
+#content>div>div p{
+    font-size:30px;
+    color:rgb(240, 211, 159);
+    font-weight:bold;
+}
