@@ -23,10 +23,10 @@ namespace WOS_Test.Controllers
         public IEnumerable<UserDatumDto> Get([FromQuery] string? name, string? pw)
         {
             var result = _wosContext.UserData.Select(a=>new UserDatumDto
-                {
-                    Username = a.Username,
-                    Password = a.Password
-                });
+            {
+                Username = a.Username,
+                Password = a.Password
+            });
 
 
             if (!string.IsNullOrWhiteSpace(name))
@@ -37,9 +37,12 @@ namespace WOS_Test.Controllers
             {
                 result = result.Where(a => a.Password.Contains(pw));
             }
-            return result;
+
+            return result.ToList().Select(a => DatumToDto(a));
             
         }
+
+        
 
         // GET api/<WOSController>/5
         [HttpGet("{id}")]
@@ -104,6 +107,15 @@ namespace WOS_Test.Controllers
             _wosContext.UserData.Remove(delete);
             _wosContext.SaveChanges();
             return NoContent();
+        }
+
+        private static UserDatumDto DatumToDto(UserDatumDto item)
+        {
+            return new UserDatumDto
+            {
+                Username = item.Username,
+                Password = item.Password
+            };
         }
     }
 }
