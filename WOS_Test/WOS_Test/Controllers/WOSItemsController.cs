@@ -20,9 +20,9 @@ namespace WOS_Test.Controllers
 
         // GET: api/<WOSController>
         [HttpGet]
-        public IEnumerable<UserDatumDto> Get([FromQuery] string? name, string? pw)
+        public IActionResult Get([FromQuery] string? name, string? pw)
         {
-            var result = _wosContext.UserData.Select(a=>new UserDatumDto
+            var result = _wosContext.UserData.Select(a=>new UserDatum
             {
                 Username = a.Username,
                 Password = a.Password
@@ -38,7 +38,12 @@ namespace WOS_Test.Controllers
                 result = result.Where(a => a.Password.Contains(pw));
             }
 
-            return result.ToList().Select(a => DatumToDto(a));
+
+            if(result == null || result.Count() <= 0)
+            {
+                return NotFound("查無此資料");
+            }
+            return Ok(result.ToList().Select(a => DatumToDto(a)));
             
         }
 
@@ -52,14 +57,17 @@ namespace WOS_Test.Controllers
 
         // GET api/<WOSController>/5
         [HttpGet("{id}")]
-        public ActionResult<UserDatum> Get(int id)
+        public ActionResult<UserDatumDto> Get(int id)
         {
-            var result = _wosContext.UserData.Find(id);
+            var result = (from a in _wosContext.UserData
+                          where a.UserId == id
+                          select a).SingleOrDefault();
+
             if(result == null)
             {
-                return NotFound("找不到");
+                return NotFound("查無UserID:" + id + "的資料");
             }
-            return result;
+            return DatumToDto(result);
         }
 
         // POST api/<WOSController>
@@ -115,7 +123,7 @@ namespace WOS_Test.Controllers
             return NoContent();
         }
 
-        private static UserDatumDto DatumToDto(UserDatumDto item)
+        private static UserDatumDto DatumToDto(UserDatum item)
         {
             return new UserDatumDto
             {
