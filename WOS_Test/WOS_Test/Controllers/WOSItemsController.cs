@@ -42,7 +42,13 @@ namespace WOS_Test.Controllers
             
         }
 
-        
+        [HttpGet("GetSQL")]
+        public IEnumerable<UserDatum> GetSQL()
+        {
+            var result = _wosContext.UserData.FromSqlRaw("Select * From Userdata");
+
+            return result;
+        }
 
         // GET api/<WOSController>/5
         [HttpGet("{id}")]
