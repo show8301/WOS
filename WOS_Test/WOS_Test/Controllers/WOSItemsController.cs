@@ -74,10 +74,31 @@ namespace WOS_Test.Controllers
         [HttpPost]
         public ActionResult<UserDatum> Post([FromBody] UserDatum value)
         {
-            _wosContext.UserData.Add(value);
+            int id;
+
+            if (value.UserId == 0)
+            {
+                var result = (from a in _wosContext.UserData
+                              orderby a.UserId
+                              select a.UserId).ToList();
+                id = result.Count() - 1;
+            }
+            else
+            {
+                id = value.UserId;
+            }
+
+            UserDatum insert = new UserDatum
+            { 
+                UserId = id,
+                Username = value.Username,
+                Password = value.Password
+            };
+
+            _wosContext.UserData.Add(insert);
             _wosContext.SaveChanges();
 
-            return CreatedAtAction(nameof(Get), new {id = value.UserId}, value);
+            return Ok("資料登錄成功");
         }
 
         // PUT api/<WOSController>/5
