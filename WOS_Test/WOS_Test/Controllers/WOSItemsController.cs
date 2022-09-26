@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WOS_Test.Dtos;
 using WOS_Test.Models;
@@ -129,6 +130,23 @@ namespace WOS_Test.Controllers
                 }
             }
             return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult Patch(int id, [FromBody] JsonPatchDocument value)
+        {
+            var patch = (from a in _wosContext.UserData
+                         where id == a.UserId
+                         select a).SingleOrDefault();
+
+            if(patch != null)
+            {
+                value.ApplyTo(patch);
+            }
+
+            _wosContext.SaveChanges();
+
+            return Ok("更新成功");
         }
 
         // DELETE api/<WOSController>/5

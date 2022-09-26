@@ -1,15 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using WOS_Test.Models;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 builder.Services.AddDbContext<WOSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("WOSDatabase")));
-
-builder.Services.AddControllers().AddNewtonsoftJson();
 
 var app = builder.Build();
 
@@ -22,3 +21,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+
