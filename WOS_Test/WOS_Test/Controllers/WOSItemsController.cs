@@ -72,16 +72,17 @@ namespace WOS_Test.Controllers
 
         // POST api/<WOSController>
         [HttpPost]
-        public ActionResult<UserDatum> Post([FromBody] UserDatum value)
+        public IActionResult Post([FromBody] UserDatumPostDto value)
         {
             int id;
 
+            // 因為若body內沒給UserId，預設是0
             if (value.UserId == 0)
             {
                 var result = (from a in _wosContext.UserData
                               orderby a.UserId
                               select a.UserId).ToList();
-                id = result.Count() - 1;
+                id = result.Count();
             }
             else
             {
