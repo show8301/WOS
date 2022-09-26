@@ -99,7 +99,7 @@ namespace WOS_Test.Controllers
             _wosContext.UserData.Add(insert);
             _wosContext.SaveChanges();
 
-            return Ok("資料登錄成功");
+            return CreatedAtAction(nameof(Get), new {id = insert.UserId}, insert);
         }
 
         // PUT api/<WOSController>/5
