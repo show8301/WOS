@@ -9,6 +9,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<WOSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("WOSDatabase")));
 
+builder.Services.AddControllers().AddNewtonsoftJson();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

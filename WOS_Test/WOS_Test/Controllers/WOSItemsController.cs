@@ -104,7 +104,7 @@ namespace WOS_Test.Controllers
 
         // PUT api/<WOSController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] UserDatum value)
+        public IActionResult Put(int id, [FromBody] UserDatumPutDto value)
         {
             if(id != value.UserId)
             {
