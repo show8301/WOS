@@ -83,7 +83,7 @@ namespace WOS_Test.Controllers
                 var result = (from a in _wosContext.UserData
                               orderby a.UserId
                               select a.UserId).ToList();
-                id = result.Count();
+                id = result[result.Count()-1] + 1;
             }
             else
             {
