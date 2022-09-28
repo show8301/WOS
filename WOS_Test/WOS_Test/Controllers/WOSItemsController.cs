@@ -113,7 +113,13 @@ namespace WOS_Test.Controllers
                 return BadRequest();
             }
 
-            _wosContext.Entry(value).State = EntityState.Modified;
+            var put = _wosContext.UserData.Find(id);
+
+            if(put != null)
+            {
+                put.Username = value.Username;
+                put.Password = value.Password;
+            }
 
             try
             {
