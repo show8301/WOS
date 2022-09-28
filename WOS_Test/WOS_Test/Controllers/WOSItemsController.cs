@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using WOS_Test.Dtos;
 using WOS_Test.Models;
 
@@ -161,6 +162,26 @@ namespace WOS_Test.Controllers
             _wosContext.UserData.Remove(delete);
             _wosContext.SaveChanges();
             return NoContent();
+        }
+
+        // DELETE api/<WOSController>/list/5
+        [HttpDelete("list/{ids}")]
+        public IActionResult ListDelete(string ids)
+        {
+            List<int> deleteList = JsonSerializer.Deserialize<List<int>>(ids);
+
+            var delete = (from a in _wosContext.UserData
+                          where deleteList.Contains(a.UserId)
+                          select a);
+            if(delete == null)
+            {
+                return NotFound("已有指定的資料被刪除");
+            }
+
+            _wosContext.UserData.RemoveRange(delete);
+            _wosContext.SaveChanges();
+
+            return Ok("刪除成功");
         }
 
         private static UserDatumDto DatumToDto(UserDatum item)
