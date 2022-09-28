@@ -9,7 +9,7 @@ namespace WOS_Test.ValidationAttributes
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             var pw = (string)value;
-            string name="";
+            string name = "";
 
             if(validationContext.ObjectInstance.GetType() == typeof(UserDatumPostDto))
             {
