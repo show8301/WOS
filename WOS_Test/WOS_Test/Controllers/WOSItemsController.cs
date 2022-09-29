@@ -64,27 +64,7 @@ namespace WOS_Test.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] UserDatumPostDto value)
         {
-            int id;
-
-            // 因為若body內沒給UserId，預設是0
-            if (value.UserId == 0)
-            {
-                var result = (from a in _wosContext.UserData
-                              orderby a.UserId
-                              select a.UserId).ToList();
-                id = result[result.Count()-1] + 1;
-            }
-            else
-            {
-                id = value.UserId;
-            }
-
-            UserDatum insert = new UserDatum
-            { 
-                UserId = id,
-                Username = value.Username,
-                Password = value.Password
-            };
+            var insert = _userDatumService.PostNewUser(value);
 
             _wosContext.UserData.Add(insert);
             _wosContext.SaveChanges();

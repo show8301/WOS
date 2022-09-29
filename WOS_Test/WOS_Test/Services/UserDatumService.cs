@@ -53,6 +53,45 @@ namespace WOS_Test.Services
             return DatumToDto(result);
         }
 
+        public UserDatum PostNewUser(UserDatumPostDto value)
+        {
+            int id = 0 ;
+
+            // 因為若body內沒給UserId，預設是0
+            if (value.UserId == 0)
+            {
+                var result = (from a in _wosContext.UserData
+                              orderby a.UserId
+                              select a.UserId).ToList();
+
+                for(int i = 0; i < result.Count; i++)
+                {
+                    if(i != result[i])
+                    {
+                        id = i;
+                        break;
+                    }
+                    if(i == result.Count - 1)
+                    {
+                        id = result[i] + 1;
+                    }
+                }
+            }
+            else
+            {
+                id = value.UserId;
+            }
+
+            UserDatum insert = new UserDatum
+            {
+                UserId = id,
+                Username = value.Username,
+                Password = value.Password
+            };
+
+            return insert;
+        }
+
 
 
 
