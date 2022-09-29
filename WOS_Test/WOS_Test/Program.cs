@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WOS_Test.Models;
-
+using WOS_Test.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddNewtonsoftJson();
 
 builder.Services.AddDbContext<WOSContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("WOSDatabase")));
+
+builder.Services.AddScoped<UserDatumService>();
 
 var app = builder.Build();
 

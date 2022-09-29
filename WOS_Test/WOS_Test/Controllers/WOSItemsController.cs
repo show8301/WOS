@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using WOS_Test.Dtos;
 using WOS_Test.Models;
+using WOS_Test.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,45 +15,34 @@ namespace WOS_Test.Controllers
     public class WOSItemsController : ControllerBase
     {
         private readonly WOSContext _wosContext;
+        private readonly UserDatumService _userDatumService;
 
-        public WOSItemsController(WOSContext wosContext)
+        public WOSItemsController(
+            WOSContext wosContext,
+            UserDatumService userDatumService)
         {
             _wosContext = wosContext;
+            _userDatumService = userDatumService;
         }
 
         // GET: api/<WOSController>
         [HttpGet]
         public IActionResult Get([FromQuery] string? name, string? pw)
         {
-            var result = _wosContext.UserData.Select(a=>new UserDatum
-            {
-                Username = a.Username,
-                Password = a.Password
-            });
-
-
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                result = result.Where(a => a.Username.Contains(name));
-            }
-            if(!string.IsNullOrWhiteSpace(pw))
-            {
-                result = result.Where(a => a.Password.Contains(pw));
-            }
-
+            var result = _userDatumService.GetData(name, pw);
 
             if(result == null || result.Count() <= 0)
             {
                 return NotFound("查無此資料");
             }
-            return Ok(result.ToList().Select(a => DatumToDto(a)));
-            
+
+            return Ok(result);
         }
 
         [HttpGet("GetSQL")]
         public IEnumerable<UserDatum> GetSQL()
         {
-            var result = _wosContext.UserData.FromSqlRaw("Select * From Userdata");
+            var result = _userDatumService.GetData_SQL(); 
 
             return result;
         }
@@ -61,15 +51,13 @@ namespace WOS_Test.Controllers
         [HttpGet("{id}")]
         public ActionResult<UserDatumDto> Get(int id)
         {
-            var result = (from a in _wosContext.UserData
-                          where a.UserId == id
-                          select a).SingleOrDefault();
+            var result = _userDatumService.GetID(id);
 
             if(result == null)
             {
                 return NotFound("查無UserID:" + id + "的資料");
             }
-            return DatumToDto(result);
+            return result;
         }
 
         // POST api/<WOSController>
