@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using System.Xml.Linq;
 using WOS_Test.Dtos;
 using WOS_Test.Models;
@@ -116,6 +117,33 @@ namespace WOS_Test.Services
             {
                 value.ApplyTo(patch);
             }
+
+            return _wosContext.SaveChanges();
+        }
+
+        public int DeleteData(int id)
+        {
+            var delete = _wosContext.UserData.Find(id);
+
+            if (delete != null)
+            {
+                _wosContext.UserData.Remove(delete);
+            }
+
+            return _wosContext.SaveChanges();
+        }
+
+        public int DeleteListData(string ids)
+        {
+            List<int> deleteList = JsonSerializer.Deserialize<List<int>>(ids);
+
+            var delete = (from a in _wosContext.UserData
+                          where deleteList.Contains(a.UserId)
+                          select a);
+            if (delete != null)
+            {
+                _wosContext.UserData.RemoveRange(delete);
+            }            
 
             return _wosContext.SaveChanges();
         }
