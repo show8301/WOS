@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Xml.Linq;
 using WOS_Test.Dtos;
@@ -92,9 +93,32 @@ namespace WOS_Test.Services
             return insert;
         }
 
+        public int PutData(int id, UserDatumPutDto value)
+        {
+            var put = _wosContext.UserData.Find(id);
 
+            if (put != null)
+            {
+                put.Username = value.Username;
+                put.Password = value.Password;
+            }
 
+            return _wosContext.SaveChanges();
+        }
 
+        public int PatchData(int id, JsonPatchDocument value)
+        {
+            var patch = (from a in _wosContext.UserData
+                         where id == a.UserId
+                         select a).SingleOrDefault();
+
+            if (patch != null)
+            {
+                value.ApplyTo(patch);
+            }
+
+            return _wosContext.SaveChanges();
+        }
 
 
 

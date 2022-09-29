@@ -81,28 +81,10 @@ namespace WOS_Test.Controllers
                 return BadRequest();
             }
 
-            var put = _wosContext.UserData.Find(id);
 
-            if(put != null)
+            if(_userDatumService.PutData(id, value) == 0)
             {
-                put.Username = value.Username;
-                put.Password = value.Password;
-            }
-
-            try
-            {
-                _wosContext.SaveChanges();
-            }
-            catch (DbUpdateException)
-            {
-                if(!_wosContext.UserData.Any(e=>e.UserId == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    return StatusCode(500, "存取發生錯誤");
-                }
+                return NotFound();
             }
             return NoContent();
         }
@@ -110,18 +92,14 @@ namespace WOS_Test.Controllers
         [HttpPatch("{id}")]
         public IActionResult Patch(int id, [FromBody] JsonPatchDocument value)
         {
-            var patch = (from a in _wosContext.UserData
-                         where id == a.UserId
-                         select a).SingleOrDefault();
-
-            if(patch != null)
+            if(_userDatumService.PatchData(id, value) == 1)
             {
-                value.ApplyTo(patch);
+                return Ok("更新成功");
             }
-
-            _wosContext.SaveChanges();
-
-            return Ok("更新成功");
+            else
+            {
+                return StatusCode(500, "更新失敗");
+            }
         }
 
         // DELETE api/<WOSController>/5
@@ -156,15 +134,6 @@ namespace WOS_Test.Controllers
             _wosContext.SaveChanges();
 
             return Ok("刪除成功");
-        }
-
-        private static UserDatumDto DatumToDto(UserDatum item)
-        {
-            return new UserDatumDto
-            {
-                Username = item.Username,
-                Password = item.Password
-            };
         }
     }
 }
