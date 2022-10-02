@@ -18,9 +18,14 @@ namespace WOS_Test.Controllers
         }
 
         [HttpPost]
-        public void Post(List<IFormFile> files)
+        public void Post(List<IFormFile> files, [FromQuery] int? id)
         {
-            string root = _env.ContentRootPath + @"\wwwroot\";
+            string root = _env.ContentRootPath + @"\wwwroot\" + id + "\\";
+
+            if (!Directory.Exists(root))
+            {
+                Directory.CreateDirectory(root);
+            }
 
             foreach(var file in files)
             {
