@@ -17,7 +17,7 @@ namespace WOS_Test.Services
             _wosContext = wosContext;
         }
 
-        public List<UserDatumDto> GetData(string? name, string? pw)
+        public async Task<List<UserDatumDto>> GetData(string? name, string? pw)
         {
 
             var result = _wosContext.UserData.Select(a => new UserDatum
@@ -35,36 +35,39 @@ namespace WOS_Test.Services
                 result = result.Where(a => a.Password.Contains(pw));
             }
 
+            var temp = await result.ToListAsync();
 
-            return result.ToList().Select(a => DatumToDto(a)).ToList();
+            return temp.Select(a => DatumToDto(a)).ToList();
         }
 
-        public IEnumerable<UserDatum> GetData_SQL()
+        public async Task<IEnumerable<UserDatum>> GetData_SQL()
         {
-            var result = _wosContext.UserData.FromSqlRaw("Select * From Userdata");
+            var temp = _wosContext.UserData.FromSqlRaw("Select * From Userdata");
+
+            var result = await temp.ToListAsync();
 
             return result;
         }
 
-        public ActionResult<UserDatumDto> GetID(int id)
+        public async Task<ActionResult<UserDatumDto>> GetID(int id)
         {
-            var result = (from a in _wosContext.UserData
+            var result = await (from a in _wosContext.UserData
                         where a.UserId == id
-                        select a).SingleOrDefault();
+                        select a).SingleOrDefaultAsync();
 
             return DatumToDto(result);
         }
 
-        public UserDatum PostNewUser(UserDatumPostDto value)
+        public async Task<UserDatum> PostNewUser(UserDatumPostDto value)
         {
             int id = 0 ;
 
             // 因為若body內沒給UserId，預設是0
             if (value.UserId == 0)
             {
-                var result = (from a in _wosContext.UserData
+                var result = await (from a in _wosContext.UserData
                               orderby a.UserId
-                              select a.UserId).ToList();
+                              select a.UserId).ToListAsync();
 
                 for(int i = 0; i < result.Count; i++)
                 {
@@ -94,9 +97,9 @@ namespace WOS_Test.Services
             return insert;
         }
 
-        public int PutData(int id, UserDatumPutDto value)
+        public async Task<int> PutData(int id, UserDatumPutDto value)
         {
-            var put = _wosContext.UserData.Find(id);
+            var put = await _wosContext.UserData.FindAsync(id);
 
             if (put != null)
             {
@@ -104,36 +107,36 @@ namespace WOS_Test.Services
                 put.Password = value.Password;
             }
 
-            return _wosContext.SaveChanges();
+            return await _wosContext.SaveChangesAsync();
         }
 
-        public int PatchData(int id, JsonPatchDocument value)
+        public async Task<int> PatchData(int id, JsonPatchDocument value)
         {
-            var patch = (from a in _wosContext.UserData
+            var patch = await (from a in _wosContext.UserData
                          where id == a.UserId
-                         select a).SingleOrDefault();
+                         select a).SingleOrDefaultAsync();
 
             if (patch != null)
             {
                 value.ApplyTo(patch);
             }
 
-            return _wosContext.SaveChanges();
+            return await _wosContext.SaveChangesAsync();
         }
 
-        public int DeleteData(int id)
+        public async Task<int> DeleteData(int id)
         {
-            var delete = _wosContext.UserData.Find(id);
+            var delete = await _wosContext.UserData.FindAsync(id);
 
             if (delete != null)
             {
                 _wosContext.UserData.Remove(delete);
             }
 
-            return _wosContext.SaveChanges();
+            return await _wosContext.SaveChangesAsync();
         }
 
-        public int DeleteListData(string ids)
+        public async Task<int> DeleteListData(string ids)
         {
             List<int> deleteList = JsonSerializer.Deserialize<List<int>>(ids);
 
@@ -145,7 +148,7 @@ namespace WOS_Test.Services
                 _wosContext.UserData.RemoveRange(delete);
             }            
 
-            return _wosContext.SaveChanges();
+            return await _wosContext.SaveChangesAsync();
         }
 
 

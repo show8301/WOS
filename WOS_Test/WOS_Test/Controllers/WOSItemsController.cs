@@ -27,9 +27,9 @@ namespace WOS_Test.Controllers
 
         // GET: api/<WOSController>
         [HttpGet]
-        public IActionResult Get([FromQuery] string? name, string? pw)
+        public async Task<IActionResult> Get([FromQuery] string? name, string? pw)
         {
-            var result = _userDatumService.GetData(name, pw);
+            var result = await _userDatumService.GetData(name, pw);
 
             if(result == null || result.Count() <= 0)
             {
@@ -40,18 +40,18 @@ namespace WOS_Test.Controllers
         }
 
         [HttpGet("GetSQL")]
-        public IEnumerable<UserDatum> GetSQL()
+        public async Task<IEnumerable<UserDatum>> GetSQL()
         {
-            var result = _userDatumService.GetData_SQL(); 
+            var result = await _userDatumService.GetData_SQL(); 
 
             return result;
         }
 
         // GET api/<WOSController>/5
         [HttpGet("{id}")]
-        public ActionResult<UserDatumDto> Get(int id)
+        public async Task<ActionResult<UserDatumDto>> Get(int id)
         {
-            var result = _userDatumService.GetID(id);
+            var result = await _userDatumService.GetID(id);
 
             if(result == null)
             {
@@ -62,9 +62,9 @@ namespace WOS_Test.Controllers
 
         // POST api/<WOSController>
         [HttpPost]
-        public IActionResult Post([FromBody] UserDatumPostDto value)
+        public async Task<IActionResult> Post([FromBody] UserDatumPostDto value)
         {
-            var insert = _userDatumService.PostNewUser(value);
+            var insert = await _userDatumService.PostNewUser(value);
 
             _wosContext.UserData.Add(insert);
             _wosContext.SaveChanges();
@@ -74,25 +74,25 @@ namespace WOS_Test.Controllers
 
         // PUT api/<WOSController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] UserDatumPutDto value)
+        public async Task<IActionResult> Put(int id, [FromBody] UserDatumPutDto value)
         {
             if(id != value.UserId)
             {
                 return BadRequest();
             }
 
-
-            if(_userDatumService.PutData(id, value) == 0)
+            if(await _userDatumService.PutData(id, value) == 0)
             {
                 return NotFound();
             }
+
             return NoContent();
         }
 
         [HttpPatch("{id}")]
-        public IActionResult Patch(int id, [FromBody] JsonPatchDocument value)
+        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument value)
         {
-            if(_userDatumService.PatchData(id, value) == 1)
+            if(await _userDatumService.PatchData(id, value) == 1)
             {
                 return Ok("更新成功");
             }
@@ -104,9 +104,9 @@ namespace WOS_Test.Controllers
 
         // DELETE api/<WOSController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if(_userDatumService.DeleteData(id) == 0)
+            if(await _userDatumService.DeleteData(id) == 0)
             {
                 return NotFound("找不到欲刪除的資料");
             }
@@ -115,9 +115,9 @@ namespace WOS_Test.Controllers
 
         // DELETE api/<WOSController>/list/5
         [HttpDelete("list/{ids}")]
-        public IActionResult ListDelete(string ids)
+        public async Task<IActionResult> ListDelete(string ids)
         {
-            if (_userDatumService.DeleteListData(ids) == 0)
+            if (await _userDatumService.DeleteListData(ids) == 0)
             {
                 return NotFound("找不到欲刪除的資料");
             }
