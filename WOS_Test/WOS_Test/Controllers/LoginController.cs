@@ -39,9 +39,14 @@ namespace WOS_Test.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, value.Username),
-                    new Claim("FullName", user.Username),
-
+                    new Claim("FullName", user.Username)                    
                 };
+
+                if (user.Username == "test_admin")
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, "admin"));
+                }
+
                 var claimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
                 HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimIdentity));
@@ -60,6 +65,12 @@ namespace WOS_Test.Controllers
         public string NoLogin()
         {
             return "未登入";
+        }
+
+        [HttpGet("NoAccess")]
+        public string NoAccess()
+        {
+            return "權限不足";
         }
     }
 }

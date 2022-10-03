@@ -18,11 +18,11 @@ builder.Services.AddScoped<UserDatumService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
-    { 
-        options.LoginPath = new PathString("/api/Login/NoLogin");
+    {
+        options.AccessDeniedPath = new PathString("/api/Login/NoAccess");
+        options.LoginPath = new PathString("/api/Login/NoLogin");        
         options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
         options.SlidingExpiration = true;
-        options.AccessDeniedPath = "/Forbidden/";
     });
 
 builder.Services.AddControllers(config =>

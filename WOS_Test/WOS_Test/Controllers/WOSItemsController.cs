@@ -28,6 +28,7 @@ namespace WOS_Test.Controllers
 
         // GET: api/<WOSController>
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Get([FromQuery] string? name, string? pw)
         {
             var result = await _userDatumService.GetData(name, pw);
@@ -41,6 +42,7 @@ namespace WOS_Test.Controllers
         }
 
         [HttpGet("GetSQL")]
+        [Authorize(Roles = "admin")]
         public async Task<IEnumerable<UserDatum>> GetSQL()
         {
             var result = await _userDatumService.GetData_SQL(); 
@@ -50,6 +52,7 @@ namespace WOS_Test.Controllers
 
         // GET api/<WOSController>/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<UserDatumDto>> Get(int id)
         {
             var result = await _userDatumService.GetID(id);
@@ -105,6 +108,7 @@ namespace WOS_Test.Controllers
 
         // DELETE api/<WOSController>/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int id)
         {
             if(await _userDatumService.DeleteData(id) == 0)
@@ -116,6 +120,7 @@ namespace WOS_Test.Controllers
 
         // DELETE api/<WOSController>/list/5
         [HttpDelete("list/{ids}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> ListDelete(string ids)
         {
             if (await _userDatumService.DeleteListData(ids) == 0)
