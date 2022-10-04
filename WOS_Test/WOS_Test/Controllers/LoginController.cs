@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using WOS_Test.Dtos;
 using WOS_Test.Models;
 
@@ -16,10 +19,12 @@ namespace WOS_Test.Controllers
     public class LoginController : ControllerBase
     {
         private readonly WOSContext _wosContext;
+        private readonly IConfiguration _configuration;
 
-        public LoginController(WOSContext wosContext)
+        public LoginController(WOSContext wosContext, IConfiguration configuration)
         {
             _wosContext = wosContext;
+            _configuration = configuration;
         }
         
         [HttpPost]
@@ -38,7 +43,7 @@ namespace WOS_Test.Controllers
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, value.Username),
+                    new Claim(JwtRegisteredClaimNames.GivenName, value.Username),
                     new Claim("FullName", user.Username)                    
                 };
 
@@ -47,11 +52,20 @@ namespace WOS_Test.Controllers
                     claims.Add(new Claim(ClaimTypes.Role, "admin"));
                 }
 
-                var claimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:KEY"]));
 
-                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimIdentity));
+                var jwt = new JwtSecurityToken
+                (
+                    issuer: _configuration["JWT:Issuer"],
+                    audience: _configuration["JWT:Audience"],
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(30),
+                    signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256)
+                );
 
-                return "登入成功";
+                var token = new JwtSecurityTokenHandler().WriteToken(jwt);
+              
+                return token;
             }
         }
 
