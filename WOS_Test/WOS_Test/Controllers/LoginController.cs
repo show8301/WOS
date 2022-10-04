@@ -43,8 +43,7 @@ namespace WOS_Test.Controllers
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(JwtRegisteredClaimNames.GivenName, value.Username),
-                    new Claim("FullName", user.Username)                    
+                    new Claim(JwtRegisteredClaimNames.Name, value.Username),               
                 };
 
                 if (user.Username == "test_admin")
